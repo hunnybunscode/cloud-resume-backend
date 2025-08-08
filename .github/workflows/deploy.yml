@@ -1,0 +1,24 @@
+﻿name: Deploy Backend
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::644177600752:role/crc-backend-deployer
+
+      - name: Install SAM CLI
+        run: pip install aws-sam-cli
+
+      - name: Build
+        run: sam build
+
+      - name: Deploy
+        run: sam deploy --no-confirm-changeset --stack-name cloud-resume-backend --capabilities CAPABILITY_IAM
